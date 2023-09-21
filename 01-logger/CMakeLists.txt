@@ -7,7 +7,7 @@ include_directories(${logging_SOURCE_DIR}/inc)
 
 add_executable(main.x main.c)
 
-target_compile_options(main.x PUBLIC -Wall)
+target_compile_options(main.x PUBLIC -O3 -Wall)
 target_link_libraries(main.x PRIVATE log)
 
 macro(MACRO_ENSURE_OUT_OF_SOURCE_BUILD MSG)
