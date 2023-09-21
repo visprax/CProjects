@@ -1,161 +1,70 @@
-/*#include <iostream>*/
-/*#include <iomanip>*/
-/*#include <string>*/
-/*#include <sstream>*/
-/*#include <stdexcept>*/
-/*#include <ctime>*/
-
+#include <stdlib.h>
+#include <stdint.h>
+#include <stdarg.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "logging.h"
 
-const char* loglevel_to_string(LogLevel level) {
-    switch(level) {
-        case 0: return "DEBUG";
-        case 1: return "INFO";
-        case 2: return "WARN";
-        case 3: return "ERROR";
-        case 4: return "CRITICAL";
-    }
-    return "NOLEVEL";
-}
+static const char* LOGNAME = "logger";
 
-void logger(const char* message, LogLevel level) {
+static const Colors set_colors() {
     Colors colors;
     colors.red     = "\x1b[31m";
-    colors.green   = "\x1b[31m";
-    colors.yellow  = "\x1b[31m";
-    colors.blue    = "\x1b[31m";
-    colors.magenta = "\x1b[31m";
-    colors.cyan    = "\x1b[31m";
-    colors.reset   = "\x1b[31m";
+    colors.green   = "\x1b[32m";
+    colors.yellow  = "\x1b[33m";
+    colors.blue    = "\x1b[34m";
+    colors.magenta = "\x1b[35m";
+    colors.cyan    = "\x1b[36m";
+    colors.reset   = "\x1b[0m";
 
-    const char* level_string = loglevel_to_string(level);
-
-    printf("this is from logging.\n");
-    printf("this is printed message: %s: %s", level_string, message);
+    return colors;
 }
 
+void logger(const char* name, const uint8_t level, const char* message, ...) {
+    Colors colors = set_colors();
 
-/*
- *namespace logging 
- *{
- *    Logging::Logging(LogLevel level [>= INFO<],
- *                const std::string& name [>= "main"<],
- *                const std::string& filepath [>= ""<])
- *    {
- *        Logging::setName(name);
- *        Logging::setLevel(level);
- *        Logging::setFilepath(filepath);
- *    }
- *    
- *    logging::Logging& Logging::setName(const std::string& name)
- *    {
- *        log_name = name;
- *        return *this;
- *    }
- *
- *    logging::Logging& Logging::setLevel(LogLevel level)
- *    {
- *        log_level = level;
- *        return *this;
- *    }
- *
- *    logging::Logging& Logging::setFilepath(const std::string& filepath)
- *    {
- *        log_filepath = filepath;
- *        return *this;
- *    }
- *
- *    logging::Logging& Logging::debug(std::string&& message)
- *    {
- *        std::string partial_message = Logging::partialMessage(DEBUG);
- *        std::cerr << partial_message << message << "\n";
- *        return *this;
- *    }
- *
- *    logging::Logging& Logging::info(std::string&& message)
- *    {
- *        std::string partial_message = Logging::partialMessage(INFO);
- *        std::cerr << partial_message << message << "\n";
- *        return *this;
- *    }
- *
- *    logging::Logging& Logging::warn(std::string&& message)
- *    {
- *        std::string partial_message = Logging::partialMessage(WARN);
- *        std::cerr << partial_message << message << "\n";
- *        return *this;
- *    }
- *
- *    logging::Logging& Logging::error(std::string&& message)
- *    {
- *        std::string partial_message = Logging::partialMessage(ERROR);
- *        std::cerr << partial_message << message << "\n";
- *        return *this;
- *    }
- *
- *    logging::Logging& Logging::critical(std::string&& message)
- *    {
- *        std::string partial_message = Logging::partialMessage(CRITICAL);
- *        std::cerr << partial_message << message << "\n";
- *        return *this;
- *    }
- *    
- *    std::string Logging::partialMessage(LogLevel level)
- *    {   
- *        std::string name, color;
- *        switch (level)
- *        {
- *            case 0:
- *                name  = "DEBUG";
- *                color = Logging::colors.green;
- *                break;
- *            case 1:
- *                name  = "INFO";
- *                color = Logging::colors.blue;
- *                break;
- *            case 2:
- *                name  = "WARN";
- *                color = Logging::colors.yellow;
- *                break;
- *            case 3:
- *                name  = "ERROR";
- *                color = Logging::colors.red;
- *                break;
- *            case 4:
- *                name  = "CRITICAL";
- *                color = Logging::colors.red;
- *                break;
- *            default:
- *                throw std::invalid_argument("received non-valid log level to logger");
- *        }
- *
- *        std::ostringstream oss;
- *        oss << Logging::formattedTime() << " " << Logging::log_name << " " << 
- *            color << std::setw(8) << std::right << name << Logging::colors.reset << ": ";
- *        std::string partial_message = oss.str();
- *        return partial_message;
- *    }
- *
- *    std::string Logging::formattedTime()
- *    {
- *        std::ostringstream oss;
- *        oss << Logging::colors.cyan << "[" << Logging::now() << "]" << Logging::colors.reset;
- *        std::string formatted_time = oss.str();
- *        return formatted_time;
- *    }
- *
- *    std::string Logging::now()
- *    {
- *        std::time_t now = std::time(nullptr);
- *        std::tm* tm = std::localtime(&now);
- *        
- *        std::ostringstream oss;
- *        oss << std::put_time(tm, "%d-%b-%Y %X");
- *        std::string now_string = oss.str();
- *        return now_string;
- *    }
- *}
- */
+    const char* level_color;
+    const char* level_string;
+    switch(level) {
+        case DEBUG:
+            level_color = colors.green;
+            level_string = "DEBUG";
+            break;
+        case INFO:
+            level_color = colors.yellow;
+            level_string = "INFO";
+            break;
+        case WARNING:
+            level_color = colors.blue;
+            level_string = "WARNING";
+            break;
+        case ERROR:
+            level_color = colors.red;
+            level_string = "ERROR";
+            break;
+        case CRITICAL:
+            level_color = colors.red;
+            level_string = "CRITICAL";
+            break;
+        default:
+            logger(LOGNAME, ERROR, "no support for logging level: %d", level);
+            exit(EXIT_FAILURE);
+    }
+
+    time_t now = time(NULL);
+    struct tm* datetime = localtime(&now);
+    char datetime_buff[MAX_DATETIME_BUFF_LEN];
+    strftime(datetime_buff, sizeof(datetime_buff), "%d-%m-%Y", datetime);
+
+    va_list args;
+    va_start(args, message);
+    fprintf(stderr, "%s[%s]%s %5s %s%5s%s: ", 
+            colors.cyan, datetime_buff, colors.reset, 
+            name, level_color, level_string, colors.reset);
+    vfprintf(stderr, message, args);
+    fprintf(stderr, "\n");
+    va_end(args);
+}
+
 
