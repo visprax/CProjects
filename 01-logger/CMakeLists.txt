@@ -5,10 +5,8 @@ project(logging VERSION 1.0 LANGUAGES C)
 add_subdirectory(src)
 include_directories(${logging_SOURCE_DIR}/inc)
 
-add_executable(main.x main.c)
-
-target_compile_options(main.x PUBLIC -O3 -Wall)
-target_link_libraries(main.x PRIVATE log)
+enable_testing()
+add_subdirectory(tests)
 
 macro(MACRO_ENSURE_OUT_OF_SOURCE_BUILD MSG)
     string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_BINARY_DIR}" insource)
