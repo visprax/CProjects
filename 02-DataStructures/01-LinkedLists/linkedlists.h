@@ -23,4 +23,9 @@ typedef struct DoublyLinkedList {
     DoubleNode* head;
 } DoublyLinkedList;
 
+void push_back(SinglyLinkedList* list, double data);
+void push_front(SinglyLinkedList* list, double data);
+void print_list(SinglyLinkedList* list);
+void free_list(SinglyLinkedList* list);
+
 #endif // LINKEDLISTS_H

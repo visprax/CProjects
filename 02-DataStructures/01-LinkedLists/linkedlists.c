@@ -73,6 +73,7 @@ int main() {
     push_back(&list, 2.0);
     push_back(&list, 3.0);
     push_front(&list, 0.0);
+    push_front(&list, -1.0);
     print_list(&list);
     free_list(&list);
 
