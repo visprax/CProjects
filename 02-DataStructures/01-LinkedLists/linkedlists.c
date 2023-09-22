@@ -29,6 +29,14 @@ void push_back(SinglyLinkedList* list, double data) {
     }
 }
 
+void push_front(SinglyLinkedList* list, double data) {
+    SingleNode* new_node = create_single_node(data);
+    // if head is NULL, then we set the next to NULL twice, 
+    // but better than checking for NULLness of head
+    new_node->next = list->head;
+    list->head = new_node;
+}
+
 void print_list(SinglyLinkedList* list) {
     SingleNode* current_node = list->head;
     while(current_node != NULL) {
@@ -36,7 +44,6 @@ void print_list(SinglyLinkedList* list) {
         current_node = current_node->next;
     }
     printf("NULL\n");
-
 }
 
 void free_list(SinglyLinkedList* list) {
@@ -65,6 +72,7 @@ int main() {
     push_back(&list, 1.0);
     push_back(&list, 2.0);
     push_back(&list, 3.0);
+    push_front(&list, 0.0);
     print_list(&list);
     free_list(&list);
 
