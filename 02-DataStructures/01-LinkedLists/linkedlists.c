@@ -31,7 +31,7 @@ void push_back(SinglyLinkedList* list, double data) {
 
 void push_front(SinglyLinkedList* list, double data) {
     SingleNode* new_node = create_single_node(data);
-    // if head is NULL, then we set the next to NULL twice, 
+    // if head is pointing to NULL, then we set the next to NULL twice, 
     // but better than checking for NULLness of head
     new_node->next = list->head;
     list->head = new_node;
